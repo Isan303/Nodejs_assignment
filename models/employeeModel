@@ -1,0 +1,31 @@
+import { Schema, model } from 'mongoose';
+
+const employeeSchema = Schema(
+    {
+        firstName: {
+            type: String,
+            required: [true, "Please enter Employee name"]
+        },
+        age: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+        salary: {
+            type: Number,
+            required: true,
+        },
+        address: {
+            type: String,
+            required: false,
+        }
+    },
+    {
+        timestamps: true
+    }
+)
+
+
+const Employee = model('EMP', employeeSchema);
+
+export default Employee;

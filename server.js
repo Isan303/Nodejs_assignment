@@ -1,15 +1,17 @@
-import express, { json, urlencoded } from 'express'
-import { connect } from 'mongoose'
-import { find, findById, create, findByIdAndUpdate, findByIdAndDelete } from './models/employeeModel'
+
+
+import express from "express";
+import mongoose from "mongoose";
+import Employee  from "./models/employeeModel";
 const app = express()
 
-app.use(json())
-app.use(urlencoded({extended: false}))
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
 
 //routes
 app.get('/employees', async(req, res) => {
     try {
-        const employees = await find({});
+        const employees = await Employee.find({});
         res.status(200).json(employees);
     } catch (error) {
         res.status(500).json({message: error.message})
@@ -19,7 +21,7 @@ app.get('/employees', async(req, res) => {
 app.get('/employees/:id', async(req, res) =>{
     try {
         const {id} = req.params;
-        const employee = await findById(id);
+        const employee = await Employee.findById(id);
         res.status(200).json(employee);
     } catch (error) {
         res.status(500).json({message: error.message})
@@ -29,7 +31,7 @@ app.get('/employees/:id', async(req, res) =>{
 
 app.post('/employees/add', async(req, res) => {
     try {
-        const employee = await create(req.body);
+        const employee = await Employee.create(req.body);
         res.status(200).json(employee);
         
     } catch (error) {
@@ -42,12 +44,12 @@ app.post('/employees/add', async(req, res) => {
 app.put('/employees/update/:id', async(req, res) => {
     try {
         const {id} = req.params;
-        const employee = await findByIdAndUpdate(id, req.body);
+        const employee = await Employee.findByIdAndUpdate(id, req.body);
         // we cannot find any employee in database
         if(!employee){
             return res.status(404).json({message: `cannot find any employee with ID ${id}`})
         }
-        const updatedEmployee = await findById(id);
+        const updatedEmployee = await Employee.findById(id);
         res.status(200).json(updatedEmployee);
         
     } catch (error) {
@@ -60,7 +62,7 @@ app.put('/employees/update/:id', async(req, res) => {
 app.delete('/employees/delete/:id', async(req, res) =>{
     try {
         const {id} = req.params;
-        const employee = await findByIdAndDelete(id);
+        const employee = await Employee.findByIdAndDelete(id);
         if(!employee){
             return res.status(404).json({message: `cannot find any employee with ID ${id}`})
         }
@@ -71,7 +73,7 @@ app.delete('/employees/delete/:id', async(req, res) =>{
     }
 })
 
-connect('mongodb://localhost:27017/ibm')
+mongoose.connect('mongodb://localhost:27017/ibm')
 .then(() => {
  
     app.listen(3000, ()=> {
